@@ -7,14 +7,14 @@ print(db_file)
 conn = sqlite3.connect(db_file)
 cursor = conn.cursor()
 
-# cursor.execute("""CREATE TABLE eng_cze
-#                   (eng TEXT, cze TEXT, notes TEXT,
-#                    special TEXT, author TEXT)
-#                """)
+cursor.execute("""CREATE TABLE eng_cze
+                  (eng TEXT, cze TEXT, notes TEXT,
+                   special TEXT, author TEXT)
+               """)
 
 def data_from_line(line):
     line_list = line.split("\t")
-    return (line_list[0], line_list[0], line_list[0], line_list[0], str(line_list[4]).replace("\n", ""))
+    return (line_list[0], line_list[1], line_list[2], line_list[3], str(line_list[4]).replace("\n", ""))
 
 data = [] 
 with open(raw_file) as file:
