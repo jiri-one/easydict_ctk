@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "easydict-ctk"
+version = "0.1.0"
+description = "Small translator in CustomTkinter (it is test project for now)"
+authors = ["jiri.one <nemec@jiri.one>"]
+license = "GPLv3"
+readme = "README.md"
+packages = [{include = "easydict_ctk"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+customtkinter = "^5.1.3"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.3.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
