@@ -55,7 +55,7 @@ class SQLiteBackend(DBBackend):
         # save data
         self.conn.commit()
 
-    def search_in_db(self, word, lang) -> Iterator[str] | None:
+    def search_in_db(self, word, lang, fulltext) -> Iterator[str] | None:
         sql = f"""SELECT * FROM eng_cze WHERE {lang} LIKE '%{word}%'"""
         self.cursor.execute(sql)
         results = self.cursor.fetchall()
