@@ -1,12 +1,8 @@
-import abc
+from abc import ABC, abstractmethod
+from typing import Iterator
 
-class DBBackend(abc.ABC):
-    def open_db_file(self):
-        """"""
-    
-    def prepare_db(self):
-        """"""
 
-    @abc.abstractmethod
-    def fullfill_db(self):
-        """"""
+class DBBackend(ABC):
+    @abstractmethod
+    def search_in_db(self, word, lang) -> Iterator[str] | None:
+        """The only mandatory method that provides a database search and that must return a result iterator or None."""

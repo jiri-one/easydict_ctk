@@ -2,13 +2,17 @@ import tkinter
 import customtkinter
 
 customtkinter.set_appearance_mode("System")  # Modes: system (default), light, dark
-customtkinter.set_default_color_theme("green")  # Themes: blue (default), dark-blue, green
+customtkinter.set_default_color_theme(
+    "green"
+)  # Themes: blue (default), dark-blue, green
 
 app = customtkinter.CTk()  # create CTk window like you do with the Tk window
 app.geometry("400x240")
 
+
 def button_function():
     print("button pressed")
+
 
 # Use CTkButton instead of tkinter Button
 button = customtkinter.CTkButton(master=app, text="CTkButton", command=button_function)
