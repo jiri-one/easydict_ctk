@@ -1,5 +1,6 @@
 from pathlib import Path
 import sqlite3
+import re
 from typing import Iterator
 
 # internal imports
@@ -7,6 +8,12 @@ from backend import DBBackend
 
 
 class SQLiteBackend(DBBackend):
+    @staticmethod
+    def regexp(expr, item):
+        """Helper function for search with regex"""
+        reg = re.compile(expr)
+        return reg.search(item) is not None
+
     def __init__(self):
         try:
             # TODO: import it from settings, not hardcode it
@@ -17,6 +24,7 @@ class SQLiteBackend(DBBackend):
             print(f"DB file {db_file} not found.")
             exit()
         self.conn = sqlite3.connect(db_file)
+        self.conn.create_function("REGEXP", 2, self.regexp)
         self.cursor = self.conn.cursor()
 
     def prepare_db(self, db_name: str):
@@ -55,12 +63,14 @@ class SQLiteBackend(DBBackend):
         # save data
         self.conn.commit()
 
-    def search_in_db(self, word, lang, fulltext) -> Iterator[str] | None:
-        sql = f"""SELECT * FROM eng_cze WHERE {lang} LIKE '%{word}%'"""
-        self.cursor.execute(sql)
+    def search_in_db(self, word, lang, fulltext: bool = None) -> Iterator[str] | None:
+        if fulltext:
+            sql = (f"SELECT * FROM eng_cze WHERE {lang} LIKE ?", [f"%{word}%"])
+        else:
+            sql = (f"SELECT * FROM eng_cze WHERE {lang} REGEXP ?", [rf"\b{word}\b"])
+        self.cursor.execute(*sql)
         results = self.cursor.fetchall()
         if not results:
             return None
-        # TODO: add sorting from EasyDict-GTK
         for result in iter(results):
             yield result
