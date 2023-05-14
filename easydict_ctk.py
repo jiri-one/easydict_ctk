@@ -1,76 +1,46 @@
 import customtkinter as ctk
 import tkinter.font as tkFont
-
-class App:
-    def __init__(self, root):
-        #setting title
-        root.title("EasyDict-CTK")
-        #setting window size
-        width=500
-        height=1100
-        screenwidth = root.winfo_screenwidth()
-        screenheight = root.winfo_screenheight()
-        alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
-        root.geometry(alignstr)
-        root.resizable(width=False, height=False)
-
-        GLineEdit_197=ctk.CTkEntry(root)
-        GLineEdit_197["borderwidth"] = "1px"
-        ft = tkFont.Font(family='Times',size=20)
-        GLineEdit_197["font"] = ft
-        GLineEdit_197["fg"] = "#333333"
-        GLineEdit_197["justify"] = "center"
-        GLineEdit_197["text"] = "Entry"
-        GLineEdit_197.place(x=20,y=20,width=70,height=25)
-
-        GListBox_455=ctk.CTkListbox(root)
-        GListBox_455["borderwidth"] = "1px"
-        ft = tkFont.Font(family='Times',size=20)
-        GListBox_455["font"] = ft
-        GListBox_455["fg"] = "#333333"
-        GListBox_455["justify"] = "center"
-        GListBox_455.place(x=20,y=80,width=80,height=25)
-
-        GButton_872=ctk.CTkButton(root)
-        GButton_872["bg"] = "#f0f0f0"
-        ft = tkFont.Font(family='Times',size=20)
-        GButton_872["font"] = ft
-        GButton_872["fg"] = "#000000"
-        GButton_872["justify"] = "center"
-        GButton_872["text"] = "Button"
-        GButton_872.place(x=90,y=20,width=70,height=25)
-        GButton_872["command"] = self.GButton_872_command
-
-        GRadio_215=ctk.Radiobutton(root)
-        ft = tkFont.Font(family='Times',size=20)
-        GRadio_215["font"] = ft
-        GRadio_215["fg"] = "#333333"
-        GRadio_215["justify"] = "center"
-        GRadio_215["text"] = "RadioButton"
-        GRadio_215.place(x=50,y=50,width=85,height=25)
-        GRadio_215["command"] = self.GRadio_215_command
-
-        GRadio_743=ctk.CTkRadiobutton(root)
-        ft = tkFont.Font(family='Times',size=20)
-        GRadio_743["font"] = ft
-        GRadio_743["fg"] = "#333333"
-        GRadio_743["justify"] = "center"
-        GRadio_743["text"] = "RadioButton"
-        GRadio_743.place(x=200,y=50,width=85,height=25)
-        GRadio_743["command"] = self.GRadio_743_command
-
-    def GButton_872_command(self):
-        print("command")
+import sys
+import hupper
 
 
-    def GRadio_215_command(self):
-        print("command")
+class EasyDict(ctk.CTk):
+    def __init__(self):
+        super().__init__()
+        self.title("EasyDict-CTk")
+        #self.grid_rowconfigure((0, 1, 2), weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.geometry(f"{580}x{1100}")
+        # add search entry
+        self.entry_search = ctk.CTkEntry(self)
+        self.entry_search.grid(row=0, column=0, padx=20, pady=20, sticky="ew")
+        # add search button
+        self.button_search = ctk.CTkButton(self, text="Search", command=self.search_callback)
+        self.button_search.grid(row=0, column=1, padx=20, pady=20)
+        self.button_search.bind("<Button-3>", self.test)
+        # add segmented button for switch between Fulltext and Whole word
+        self.seg_button = ctk.CTkSegmentedButton(self)
+        self.seg_button.grid(row=1, column=0, padx=(20, 10), pady=(10, 10), sticky="ew", columnspan=2)
+        self.seg_button.configure(values=["Whole word", "Fulltext"])
+        self.seg_button.set("Whole word")
+    
+    def test(nevim, event):
+        print("event", nevim, event)
 
 
-    def GRadio_743_command(self):
-        print("command")
+    def search_callback(test):
+        print(test)
+
+
+def main(args=sys.argv[1:]):
+    if '--reload' in args:
+        # start_reloader will only return in a monitored subprocess
+        reloader = hupper.start_reloader('easydict_ctk.main')
+        ctk.set_appearance_mode("light")
+        ctk.set_default_color_theme("green")
+        app = EasyDict()
+        app.mainloop()
+        
 
 if __name__ == "__main__":
-    root = ctk.Tk()
-    app = App(root)
-    root.mainloop()
+    main()
