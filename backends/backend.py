@@ -5,14 +5,14 @@ from typing import Iterator
 
 class DBBackend(ABC):
     @abstractmethod
-    def search_in_db(self, word, lang, fulltext: bool = None) -> Iterator[str] | None:
+    def search_in_db(self, word, lang, fulltext: bool = None) -> Iterator[list[str]] | None:
         """The only mandatory method that provides a database search and that must return a result iterator or None."""
 
-    def search_sorted(self, word, lang, fulltext: bool = None) -> list | str:
+    def search_sorted(self, word, lang, fulltext: bool = None) -> list | None:
         results_with_matchratio = []
         results = self.search_in_db(word, lang, fulltext)
         if not results:
-            return "No results found."
+            return None
         for result in results:
             ratio = SequenceMatcher(None, result[lang], word).ratio()
             results_with_matchratio.append([result, ratio])
