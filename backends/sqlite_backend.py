@@ -36,7 +36,7 @@ class SQLiteBackend(DBBackend):
                 """
         self.cursor.execute(sql)
 
-    def fullfill_db(self, raw_file: str | Path = None):
+    def fill_db(self, raw_file: str | Path = None):
         """Filling the database with data.
         A method that is not (yet) used in production."""
         if not raw_file:
