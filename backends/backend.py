@@ -5,7 +5,9 @@ from typing import Iterator
 
 class DBBackend(ABC):
     @abstractmethod
-    def search_in_db(self, word, lang, fulltext: bool = None) -> Iterator[list[str]] | None:
+    def search_in_db(
+        self, word, lang, fulltext: bool = None
+    ) -> Iterator[list[str]] | None:
         """The only mandatory method that provides a database search and that must return a result iterator or None."""
 
     def search_sorted(self, word, lang, fulltext: bool = None) -> list | None:
