@@ -1,11 +1,13 @@
 import customtkinter as ctk
 from customtkinter.windows.widgets.core_widget_classes import DropdownMenu
-from easydict_ctk_widgets import OptionMenuWithImages
 from tkinter import Menu
 from PIL import Image
 from pathlib import Path
 import sys
 import hupper
+
+# internal imports
+from easydict_ctk_widgets import ResultsFrame
 
 FLAG_CZE = Path(__file__).parent / "images/flag_cze.png"
 FLAG_ENG = Path(__file__).parent / "images/flag_eng.png"
@@ -18,6 +20,7 @@ class EasyDict(ctk.CTk):
         super().__init__()
         self.title("EasyDict-CTk")
         self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(2, weight=1)
         self.geometry(f"{580}x{1100}")
 
         # and then create widgets
@@ -28,8 +31,8 @@ class EasyDict(ctk.CTk):
         self.flag_cze = ctk.CTkImage(Image.open(FLAG_CZE))
         self.flag_eng = ctk.CTkImage(Image.open(FLAG_ENG))
         # add search entry
-        self.entry_search = ctk.CTkEntry(self)
-        self.entry_search.grid(row=0, column=0, padx=20, pady=20, sticky="ew")
+        self.entry_search = ctk.CTkEntry(self, corner_radius=0, border_width=3)
+        self.entry_search.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
         # add search button
         self.button_search = ctk.CTkButton(
             self,
@@ -38,32 +41,32 @@ class EasyDict(ctk.CTk):
             command=self.search_callback,
             compound="right",
         )
-        self.button_search.grid(row=0, column=1, padx=20, pady=20)
+        self.button_search.grid(row=0, column=1, pady=10)
         self.button_search.bind("<Button-3>", self.do_popup)
         self.lang_menu = DropdownMenu(
             master=self, values=["Czech", "English2"], command=self.test
         )
-        self.lang_chooser = OptionMenuWithImages(
-            self, values=["option 1", "option 2"], command=self.test
+        # add language chooser
+        self.lang = ctk.StringVar(value="ENG")
+        self.lang_chooser = ctk.CTkOptionMenu(
+            self, values=["CZE", "ENG"], command=self.test, variable=self.lang, width=5
         )
-        self.lang_chooser.set("")
-        self.lang_chooser.grid(row=0, column=2, padx=20, pady=20)
-
+        # set lang_chooser to same height like button_search
+        self.lang_chooser.configure(height=self.button_search._current_height)
+        self.lang_chooser.set("ENG")
+        self.lang_chooser.grid(row=0, column=2, padx=10)
         # add segmented button for switch between Fulltext and Whole word
-        self.seg_button = ctk.CTkSegmentedButton(self)
-        self.seg_button.grid(
-            row=1, column=0, padx=(20, 10), pady=(10, 10), sticky="ew", columnspan=2
+        self.fulltext = ctk.StringVar(value="Whole word")
+        self.seg_button = ctk.CTkSegmentedButton(
+            self, values=["Whole word", "Fulltext"], variable=self.fulltext
         )
-        self.seg_button.configure(values=["Whole word", "Fulltext"])
-        self.seg_button.set("Whole word")
-
-        # self.optionmenu = ctk.CTkOptionMenu(
-        #     self, values=[self.flag_cze, self.flag_eng], command=self.test
-        # )
-        # self.optionmenu.set(self.flag_cze)
-        # self.optionmenu.grid(
-        #     row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="ew", columnspan=2
-        # )
+        self.seg_button.grid(row=1, column=0, sticky="ew", padx=10, columnspan=3)
+        # add results frame
+        self.results_frame = ResultsFrame(self)
+        self.results_frame.grid(row=2, column=0, padx=10, pady=10, columnspan=3, sticky="nsew")
+        for i in range(20):  # add items with images
+            self.results_frame.add_item(f"image and item {i}")
+        #self.results_frame.configure(height=1000)
 
     def test(nevim, event):
         print("event", nevim, event)
@@ -82,8 +85,8 @@ def main(args=sys.argv[1:]):
     if "--reload" in args:
         # start_reloader will only return in a monitored subprocess
         reloader = hupper.start_reloader("easydict_ctk.main")
-        ctk.set_appearance_mode("light")
-        ctk.set_default_color_theme("green")
+        ctk.set_appearance_mode("system")
+        ctk.set_default_color_theme("blue")
         ctk.set_widget_scaling(1.2)
         app = EasyDict()
         app.mainloop()
