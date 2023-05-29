@@ -4,7 +4,7 @@ import re
 from typing import Iterator
 
 # internal imports
-from backend import DBBackend
+from .backend import DBBackend
 
 
 class SQLiteBackend(DBBackend):
@@ -73,4 +73,4 @@ class SQLiteBackend(DBBackend):
         if not results:
             return None
         for result in iter(results):
-            yield result
+            yield dict(zip(("eng", "cze", "notes", "special", "author"), result))

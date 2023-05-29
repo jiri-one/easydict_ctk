@@ -8,6 +8,7 @@ import hupper
 
 # internal imports
 from easydict_ctk_widgets import ResultsFrame
+from backends import sqlite_backend
 
 FLAG_CZE = Path(__file__).parent / "images/flag_cze.png"
 FLAG_ENG = Path(__file__).parent / "images/flag_eng.png"
@@ -22,6 +23,7 @@ class EasyDict(ctk.CTk):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(2, weight=1)
         self.geometry(f"{580}x{1100}")
+        self.db = sqlite_backend.SQLiteBackend()
 
         # and then create widgets
         self.create_widgets()
@@ -31,7 +33,8 @@ class EasyDict(ctk.CTk):
         self.flag_cze = ctk.CTkImage(Image.open(FLAG_CZE))
         self.flag_eng = ctk.CTkImage(Image.open(FLAG_ENG))
         # add search entry
-        self.entry_search = ctk.CTkEntry(self, corner_radius=0, border_width=3)
+        self.search_text =  ctk.StringVar(value="Enter your search text here.")
+        self.entry_search = ctk.CTkEntry(self, textvariable=self.search_text, corner_radius=0, border_width=3)
         self.entry_search.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
         # add search button
         self.button_search = ctk.CTkButton(
@@ -44,12 +47,12 @@ class EasyDict(ctk.CTk):
         self.button_search.grid(row=0, column=1, pady=10)
         self.button_search.bind("<Button-3>", self.do_popup)
         self.lang_menu = DropdownMenu(
-            master=self, values=["Czech", "English2"], command=self.test
+            master=self, values=["Czech", "English2"], command=self.lang_selector
         )
         # add language chooser
         self.lang = ctk.StringVar(value="ENG")
         self.lang_chooser = ctk.CTkOptionMenu(
-            self, values=["CZE", "ENG"], command=self.test, variable=self.lang, width=5
+            self, values=["CZE", "ENG"], command=self.lang_selector, variable=self.lang, width=5
         )
         # set lang_chooser to same height like button_search
         self.lang_chooser.configure(height=self.button_search._current_height)
@@ -65,14 +68,25 @@ class EasyDict(ctk.CTk):
         self.results_frame = ResultsFrame(self)
         self.results_frame.grid(row=2, column=0, padx=10, pady=10, columnspan=3, sticky="nsew")
         for i in range(20):  # add items with images
-            self.results_frame.add_item(f"image and item {i}")
-        #self.results_frame.configure(height=1000)
+            self.results_frame.add_result(f"image and item {i}")
 
-    def test(nevim, event):
-        print("event", nevim, event)
 
-    def search_callback(test):
-        print(test)
+    def lang_selector(self, event):
+        print("zde")
+        print(self.search_text.get())
+        print("event", self, event)
+
+    def search_callback(self):
+        word = self.search_text.get()
+        fulltext = False
+        lang = "eng"
+        results = self.db.search_sorted(word=word, lang=lang, fulltext=fulltext)
+        count = len(results)
+        self.results_frame.remove_results()
+        for result in results:
+            self.results_frame.add_result(result)
+        
+        
 
     def do_popup(self, event):
         self.lang_menu.open(

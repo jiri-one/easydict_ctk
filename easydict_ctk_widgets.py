@@ -8,17 +8,16 @@ class ResultsFrame(customtkinter.CTkScrollableFrame):
 
         self.label_list = []
 
-    def add_item(self, item, image=None):
+    def add_result(self, item):
         label = customtkinter.CTkLabel(
-            self, text=item, image=image, compound="left", padx=5, anchor="w"
+            self, text=item, compound="left", padx=5, anchor="w"
         )
 
         label.grid(row=len(self.label_list), column=0, pady=(0, 10), sticky="w")
         self.label_list.append(label)
 
-    def remove_item(self, item):
-        for label in self.label_list:
-            if item == label.cget("text"):
-                label.destroy()
-                self.label_list.remove(label)
-                return
+    def remove_results(self):
+        while self.label_list:
+            label = self.label_list.pop()
+            label.destroy()
+        return
