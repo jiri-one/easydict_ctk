@@ -1,6 +1,5 @@
 import customtkinter as ctk
 from customtkinter.windows.widgets.core_widget_classes import DropdownMenu
-from tkinter import Menu
 from PIL import Image
 from pathlib import Path
 import sys
@@ -25,6 +24,7 @@ class EasyDict(ctk.CTk):
         self.geometry(f"{580}x{1100}")
         self.db = sqlite_backend.SQLiteBackend()
         self.lang = "eng"
+        self.font = ctk.CTkFont(family="Arial", size=22, weight="normal")
 
         # and then create widgets
         self.create_widgets()
@@ -36,7 +36,11 @@ class EasyDict(ctk.CTk):
         # add search entry
         self.search_text = ctk.StringVar(value="Enter your search text here.")
         self.entry_search = ctk.CTkEntry(
-            self, textvariable=self.search_text, corner_radius=0, border_width=3
+            self,
+            textvariable=self.search_text,
+            corner_radius=0,
+            border_width=3,
+            font=self.font,
         )
         self.entry_search.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
         # add search button
@@ -46,12 +50,16 @@ class EasyDict(ctk.CTk):
             image=self.flag_cze if self.lang == "cze" else self.flag_eng,
             command=self.search_callback,
             compound="right",
+            font=self.font,
             width=5,  # it will be bigger then 5, it will fit to text and image
         )
         self.button_search.grid(row=0, column=1, pady=10)
         self.button_search.bind("<Button-3>", self.do_popup)
         self.lang_menu = DropdownMenu(
-            master=self, values=["CZE", "ENG"], command=self.lang_selector
+            master=self,
+            values=["CZE", "ENG"],
+            command=self.lang_selector,
+            font=self.font,
         )
         # add language chooser
         self.lang_chooser = ctk.CTkOptionMenu(
@@ -59,6 +67,7 @@ class EasyDict(ctk.CTk):
             values=["CZE", "ENG"],
             command=self.lang_selector,
             width=5,  # it will be bigger then 5, it will fit to text and image
+            font=self.font,
         )
         # set lang_chooser to same height like button_search
         self.lang_chooser.configure(height=self.button_search._current_height)
@@ -67,7 +76,10 @@ class EasyDict(ctk.CTk):
         # add segmented button for switch between Fulltext and Whole word
         self.fulltext = ctk.StringVar(value="Whole word")
         self.seg_button = ctk.CTkSegmentedButton(
-            self, values=["Whole word", "Fulltext"], variable=self.fulltext
+            self,
+            values=["Whole word", "Fulltext"],
+            variable=self.fulltext,
+            font=self.font,
         )
         self.seg_button.grid(row=1, column=0, sticky="ew", padx=10, columnspan=3)
         # add results frame
@@ -75,8 +87,8 @@ class EasyDict(ctk.CTk):
         self.results_frame.grid(
             row=2, column=0, padx=10, pady=10, columnspan=3, sticky="nsew"
         )
-        for i in range(20):  # add items with images
-            self.results_frame.add_result(f"image and item {i}")
+        # for i in range(20):  # add items with images
+        #     self.results_frame.add_result(f"image and item {i}")
 
     def lang_selector(self, lang):
         self.lang = lang.lower()
