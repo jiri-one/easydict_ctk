@@ -82,7 +82,11 @@ class EasyDict(ctk.CTk):
         lang = "eng"
         results = self.db.search_sorted(word=word, lang=lang, fulltext=fulltext)
         count = len(results)
+        # remove old results
         self.results_frame.remove_results()
+        # add first label with total number of results
+        self.results_frame.add_count(count)
+        # and add labels with results (one by one)
         for result in results:
             self.results_frame.add_result(result)
         
