@@ -110,7 +110,7 @@ class EasyDict(ctk.CTk):
         self.results_frame.add_count(count)
         # and add labels with results (one by one)
         for result in results:
-            self.results_frame.add_result(result)
+            self.results_frame.add_result(result, self.lang)
 
     def do_popup(self, event):
         self.lang_menu.open(

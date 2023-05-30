@@ -29,7 +29,7 @@ class ResultsFrame(ctk.CTkScrollableFrame):
         )
         self.label_list.append(icon_label)
         icon_label.grid(row=len(self.label_list), column=0, sticky="nsew")
-        
+
         open_label = ctk.CTkLabel(
             self,
             text="\nThe first open source translator which is completely open with dictionary data too.",
@@ -48,9 +48,10 @@ class ResultsFrame(ctk.CTkScrollableFrame):
         first_label_with_count_info = ctk.CTkLabel(
             self,
             text=f"The number of results found is: {count}",
-            compound="left",
+            compound="center",
             padx=5,
             anchor="w",
+            font=ctk.CTkFont(family="Arial", size=24, weight="bold"),
         )
 
         first_label_with_count_info.grid(
@@ -58,11 +59,33 @@ class ResultsFrame(ctk.CTkScrollableFrame):
         )
         self.label_list.append(first_label_with_count_info)
 
-    def add_result(self, item):
-        label = ctk.CTkLabel(self, text=item, compound="left", padx=5, anchor="w")
+    def add_result(self, item, lang):
+        first_lang = lang
+        second_lang = "eng" if first_lang == "cze" else "cze"
+        label_first = ctk.CTkLabel(
+            self,
+            text=item[first_lang],
+            padx=5,
+            anchor="w",
+            font=ctk.CTkFont(family="Arial", size=20, weight="bold"),
+        )
+        label_first.grid(row=len(self.label_list), column=0, sticky="w")
+        self.label_list.append(label_first)
 
-        label.grid(row=len(self.label_list), column=0, pady=(0, 10), sticky="w")
-        self.label_list.append(label)
+        second_text = item[second_lang]
+        print(item["notes"])
+        if item["notes"]:
+            second_text = second_text + f" | {item['notes']}"
+        if item["special"]:
+            second_text = second_text + f" | {item['special']}"
+        label_second = ctk.CTkLabel(
+            self,
+            text=second_text,
+            anchor="w",
+            font=ctk.CTkFont(family="Arial", size=18, weight="normal"),
+        )
+        label_second.grid(row=len(self.label_list), column=0, padx=(25, 0), sticky="w")
+        self.label_list.append(label_second)
 
     def remove_results(self):
         while self.label_list:
