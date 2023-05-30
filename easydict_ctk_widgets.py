@@ -29,14 +29,18 @@ class ResultsFrame(ctk.CTkScrollableFrame):
         )
         self.label_list.append(icon_label)
         icon_label.grid(row=len(self.label_list), column=0, sticky="nsew")
+        
         open_label = ctk.CTkLabel(
             self,
             text="\nThe first open source translator which is completely open with dictionary data too.",
             padx=5,
             font=self.font,
         )
-        open_label.configure(wraplength=open_label.winfo_width()-500)
-        open_label.bind('<Configure>', lambda e: open_label.configure(wraplength=open_label.winfo_width()-500))
+        open_label.configure(wraplength=open_label.winfo_width() - 500)
+        open_label.bind(
+            "<Configure>",
+            lambda e: open_label.configure(wraplength=open_label.winfo_width() - 500),
+        )
         self.label_list.append(open_label)
         open_label.grid(row=len(self.label_list), column=0, sticky="nsew")
 
