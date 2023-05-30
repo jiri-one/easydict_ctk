@@ -10,10 +10,16 @@ class ResultsFrame(customtkinter.CTkScrollableFrame):
 
     def add_count(self, count):
         first_label_with_count_info = customtkinter.CTkLabel(
-            self, text=f"The number of results found is: {count}", compound="left", padx=5, anchor="w"
+            self,
+            text=f"The number of results found is: {count}",
+            compound="left",
+            padx=5,
+            anchor="w",
         )
 
-        first_label_with_count_info.grid(row=len(self.label_list), column=0, pady=(0, 10), sticky="w")
+        first_label_with_count_info.grid(
+            row=len(self.label_list), column=0, pady=(0, 10), sticky="w"
+        )
         self.label_list.append(first_label_with_count_info)
 
     def add_result(self, item):

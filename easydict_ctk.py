@@ -24,6 +24,7 @@ class EasyDict(ctk.CTk):
         self.grid_rowconfigure(2, weight=1)
         self.geometry(f"{580}x{1100}")
         self.db = sqlite_backend.SQLiteBackend()
+        self.lang = "eng"
 
         # and then create widgets
         self.create_widgets()
@@ -33,30 +34,35 @@ class EasyDict(ctk.CTk):
         self.flag_cze = ctk.CTkImage(Image.open(FLAG_CZE))
         self.flag_eng = ctk.CTkImage(Image.open(FLAG_ENG))
         # add search entry
-        self.search_text =  ctk.StringVar(value="Enter your search text here.")
-        self.entry_search = ctk.CTkEntry(self, textvariable=self.search_text, corner_radius=0, border_width=3)
+        self.search_text = ctk.StringVar(value="Enter your search text here.")
+        self.entry_search = ctk.CTkEntry(
+            self, textvariable=self.search_text, corner_radius=0, border_width=3
+        )
         self.entry_search.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
         # add search button
         self.button_search = ctk.CTkButton(
             self,
             text="Search",
-            image=self.flag_cze,
+            image=self.flag_cze if self.lang == "cze" else self.flag_eng,
             command=self.search_callback,
             compound="right",
+            width=5,  # it will be bigger then 5, it will fit to text and image
         )
         self.button_search.grid(row=0, column=1, pady=10)
         self.button_search.bind("<Button-3>", self.do_popup)
         self.lang_menu = DropdownMenu(
-            master=self, values=["Czech", "English2"], command=self.lang_selector
+            master=self, values=["CZE", "ENG"], command=self.lang_selector
         )
         # add language chooser
-        self.lang = ctk.StringVar(value="ENG")
         self.lang_chooser = ctk.CTkOptionMenu(
-            self, values=["CZE", "ENG"], command=self.lang_selector, variable=self.lang, width=5
+            self,
+            values=["CZE", "ENG"],
+            command=self.lang_selector,
+            width=5,  # it will be bigger then 5, it will fit to text and image
         )
         # set lang_chooser to same height like button_search
         self.lang_chooser.configure(height=self.button_search._current_height)
-        self.lang_chooser.set("ENG")
+        self.lang_chooser.set("ENG" if self.lang == "eng" else "CZE")
         self.lang_chooser.grid(row=0, column=2, padx=10)
         # add segmented button for switch between Fulltext and Whole word
         self.fulltext = ctk.StringVar(value="Whole word")
@@ -66,23 +72,25 @@ class EasyDict(ctk.CTk):
         self.seg_button.grid(row=1, column=0, sticky="ew", padx=10, columnspan=3)
         # add results frame
         self.results_frame = ResultsFrame(self)
-        self.results_frame.grid(row=2, column=0, padx=10, pady=10, columnspan=3, sticky="nsew")
+        self.results_frame.grid(
+            row=2, column=0, padx=10, pady=10, columnspan=3, sticky="nsew"
+        )
         for i in range(20):  # add items with images
             self.results_frame.add_result(f"image and item {i}")
 
-
-    def lang_selector(self, event):
-        print("zde")
-        print(self.search_text.get())
-        print("event", self, event)
+    def lang_selector(self, lang):
+        self.lang = lang.lower()
+        self.button_search.configure(
+            image=self.flag_cze if self.lang == "cze" else self.flag_eng
+        )
+        self.lang_chooser.set("ENG" if self.lang == "eng" else "CZE")
 
     def search_callback(self):
         word = self.search_text.get()
         fulltext = False
         if self.fulltext.get() == "Fulltext":
             fulltext = True
-        lang = "eng"
-        results = self.db.search_sorted(word=word, lang=lang, fulltext=fulltext)
+        results = self.db.search_sorted(word=word, lang=self.lang, fulltext=fulltext)
         count = len(results)
         # remove old results
         self.results_frame.remove_results()
@@ -91,13 +99,11 @@ class EasyDict(ctk.CTk):
         # and add labels with results (one by one)
         for result in results:
             self.results_frame.add_result(result)
-        
-        
 
     def do_popup(self, event):
         self.lang_menu.open(
             self.button_search.winfo_rootx(),
-            self.button_search.winfo_rooty() + self.button_search._current_height + 0,
+            self.button_search.winfo_rooty() + self.button_search.winfo_height() + 0,
         )
 
 
