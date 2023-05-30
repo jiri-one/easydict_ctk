@@ -79,6 +79,8 @@ class EasyDict(ctk.CTk):
     def search_callback(self):
         word = self.search_text.get()
         fulltext = False
+        if self.fulltext.get() == "Fulltext":
+            fulltext = True
         lang = "eng"
         results = self.db.search_sorted(word=word, lang=lang, fulltext=fulltext)
         count = len(results)
